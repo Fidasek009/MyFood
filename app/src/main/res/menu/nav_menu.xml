@@ -1,10 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_item1"
+        android:id="@+id/availableRecipes"
+        android:title="Available Recipes"
+        />
+    <item
+        android:id="@+id/allRecipes"
+        android:title="All Recipes"
+    />
+    <item
+        android:id="@+id/myIngredients"
         android:title="My Ingredients"
     />
     <item
-        android:id="@+id/nav_item2"
-        android:title="About"
+        android:id="@+id/shoppingList"
+        android:title="Shopping List"
     />
+    <item
+        android:id="@+id/about"
+        android:title="About"
+        />
 </menu>

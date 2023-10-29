@@ -2,4 +2,7 @@
     <string name="app_name">MyFood</string>
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
+    <string name="title_activity_create_recipe">CreateRecipe</string>
+    <string name="title_activity_view_recipe">ViewRecipe</string>
+    <string name="title_activity_create_ingredient">CreateIngredient</string>
 </resources>

@@ -1,0 +1,43 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_gray"
+    >
+
+    <Button
+        android:id="@+id/saveIngredient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/orange"
+        android:textColor="@color/white"
+        android:text="Save"
+    />
+
+    <Button
+        android:id="@+id/cancelIngredient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_toStartOf="@id/saveIngredient"
+        android:backgroundTint="@color/red"
+        android:textColor="@color/white"
+        android:text="Cancel"
+    />
+
+    <EditText
+        android:id="@+id/recipeName"
+        android:layout_below="@id/saveIngredient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:textColorHint="@color/dark_white"
+        android:hint="Ingredient Name"
+    />
+
+
+
+</RelativeLayout>

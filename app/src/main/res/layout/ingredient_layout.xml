@@ -1,0 +1,66 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    android:backgroundTint="@color/light_gray"
+    >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        >
+
+        <TextView
+            android:id="@+id/ingredientName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:textColor="@color/white"
+            android:text="Ingredient Name"
+        />
+
+        <TextView
+            android:id="@+id/ingredientAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ingredientName"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/dark_white"
+            android:text="1000 ml"
+        />
+
+        <Button
+            android:id="@+id/addIngredient"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/removeIngredient"
+            android:layout_marginEnd="8dp"
+            android:background="@color/green"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:text="+"
+        />
+
+        <Button
+            android:id="@+id/removeIngredient"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/red"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:text="-"
+        />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

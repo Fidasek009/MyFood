@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_gray"
+    >
+
+    <Button
+        android:id="@+id/close"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:background="@color/red"
+        android:textColor="@color/white"
+        android:text="X"
+    />
+
+
+    <ImageView
+        android:id="@+id/recipeImage"
+        android:layout_width="match_parent"
+        android:layout_height="256dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_background"
+    />
+
+    <TextView
+        android:id="@+id/recipeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recipeImage"
+        android:layout_margin="8dp"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:text="Recipe Name"
+    />
+
+    <TextView
+        android:id="@+id/ingredientsList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recipeName"
+        android:layout_margin="16dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:text="• Milk 500ml\n• Egg 5x\n• Coke 100g"
+    />
+
+    <TextView
+        android:id="@+id/instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ingredientsList"
+        android:layout_margin="16dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:text="First prepare your wife on medium heat. Then add the milk and egg. Finally, add the coke and stir well."
+    />
+
+</RelativeLayout>
