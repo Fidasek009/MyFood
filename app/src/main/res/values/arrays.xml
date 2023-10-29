@@ -1,0 +1,9 @@
+<resources>
+    <string-array name="units">
+        <item>g</item>
+        <item>Kg</item>
+        <item>ml</item>
+        <item>l</item>
+        <item>x</item>
+    </string-array>
+</resources>

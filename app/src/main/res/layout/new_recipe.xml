@@ -1,0 +1,120 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_gray"
+    >
+
+    <Button
+        android:id="@+id/saveRecipie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/orange"
+        android:textColor="@color/white"
+        android:text="Save"
+    />
+
+    <EditText
+        android:id="@+id/recipieName"
+        android:layout_below="@id/saveRecipie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:textColorHint="@color/dark_white"
+        android:hint="Recipie Name"
+    />
+
+    <Spinner
+        android:id="@+id/ingredientSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recipieName"
+        android:layout_margin="8dp"
+    />
+
+    <EditText
+        android:id="@+id/ingredientAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recipieName"
+        android:layout_toEndOf="@id/ingredientSpinner"
+        android:layout_margin="8dp"
+        android:inputType="number"
+        android:background="@null"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/white"
+        android:textColorHint="@color/dark_white"
+        android:hint="Amount"
+    />
+
+    <Spinner
+        android:id="@+id/ingredientUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recipieName"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_toEndOf="@id/ingredientAmount"
+        android:entries="@array/units"
+    />
+
+    <Button
+        android:id="@+id/addIngredientButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ingredientSpinner"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/green"
+        android:textColor="@color/white"
+        android:text="Add Ingredient"
+    />
+
+    <Button
+        android:id="@+id/removeIngredientButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/addIngredientButton"
+        android:layout_below="@id/ingredientSpinner"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/red"
+        android:textColor="@color/white"
+        android:text="Remove Last Ingredient"
+    />
+
+    <TextView
+        android:id="@+id/ingredientsView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addIngredientButton"
+        android:textColor="@color/white"
+        android:layout_margin="8dp"
+        android:text="• Milk 100 ml\n• Sugar 50 g\n• Flour 200 g\n• Eggs 2 x\n• Butter 50 g\n• Baking Powder 1 tsp"
+    />
+
+    <EditText
+        android:id="@+id/instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ingredientsView"
+        android:layout_margin="8dp"
+        android:inputType="textMultiLine"
+        android:textColorHint="@color/dark_white"
+        android:hint="Instructions"
+    />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/instructions"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/blue"
+        android:textColor="@color/white"
+        android:text="Add Image"
+    />
+
+</RelativeLayout>
