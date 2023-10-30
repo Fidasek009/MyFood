@@ -1,26 +1,28 @@
 package com.example.myfood
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.navigation.NavigationView
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfood.adapter.IngredientAdapter
 import com.example.myfood.adapter.RecipeAdapter
-import com.example.myfood.model.Recipe
-import com.example.myfood.model.Ingredient
+import com.example.myfood.model.database
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 
 
 class MainActivity : AppCompatActivity() {
     lateinit var toggle: ActionBarDrawerToggle
+    var showingRecipes = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // create view
@@ -88,48 +90,45 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // handle result when creating new recipe or ingredient (render with new entries)
+    private val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                if(showingRecipes){
+                    renderAvailableRecipes()
+                } else {
+                    renderIngredients()
+                }
+            }
+        }
+    
     private fun renderAvailableRecipes() {
         // available recipes
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = RecipeAdapter(getDummyRecipeData())
+        recyclerView.adapter = RecipeAdapter(database.getRecipes())
+        showingRecipes = true
 
         // add recipe button
         val addRecipeButton = findViewById<FloatingActionButton>(R.id.addButton)
         addRecipeButton.setOnClickListener {
             val createRecipe = Intent(this, CreateRecipe::class.java)
-            startActivity(createRecipe)
+            startForResult.launch(createRecipe)
         }
-    }
-
-    // TODO: load actual data
-    private fun getDummyRecipeData(): List<Recipe> {
-        val igs = getDummyIngredients()
-        return listOf(
-            Recipe("Recipe 1", "img.jpg", igs, "Kill yourself"),
-            Recipe("Recipe 2", "img.png", igs, "Let bro cook"),
-        )
     }
 
     private fun renderIngredients(){
         // available recipes
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = IngredientAdapter(getDummyIngredients())
+        recyclerView.adapter = IngredientAdapter(database.getIngredients())
+        showingRecipes = false
 
         // add ingredient button
         val addIngredientButton = findViewById<FloatingActionButton>(R.id.addButton)
         addIngredientButton.setOnClickListener {
             val createIngredient = Intent(this, CreateIngredient::class.java)
-            startActivity(createIngredient)
+            startForResult.launch(createIngredient)
         }
-    }
-
-    // TODO: load actual data
-    private fun getDummyIngredients(): List<Ingredient> {
-        val ig1: Ingredient = Ingredient("Milk", 500, "ml")
-        val ig3: Ingredient = Ingredient("Coke", 100, "g")
-        val ig2: Ingredient = Ingredient("Egg", 5, "x")
-        return listOf(ig1, ig2, ig3)
     }
 }

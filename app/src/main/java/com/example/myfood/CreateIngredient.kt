@@ -1,17 +1,12 @@
 package com.example.myfood
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.myfood.ui.theme.MyFoodTheme
+import com.example.myfood.model.database
 
 class CreateIngredient : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,5 +18,25 @@ class CreateIngredient : ComponentActivity() {
         cancelButton.setOnClickListener {
             finish()
         }
+
+        val saveButton = findViewById<Button>(R.id.saveIngredient)
+        saveButton.setOnClickListener {
+            createIngredient()
+        }
+    }
+
+    fun createIngredient() {
+        val name = findViewById<EditText>(R.id.ingredientName).text.toString()
+        val amount = findViewById<EditText>(R.id.ingredientAmount).text.toString()
+        val unit = findViewById<EditText>(R.id.ingredientUnit).text.toString()
+
+        // do not accept empty fields
+        if(name == "" || amount == "" || unit == "") return
+
+        database.newIngredient(name, amount.toInt(), unit)
+
+        // successfully created ingredient
+        setResult(Activity.RESULT_OK, Intent())
+        finish()
     }
 }

@@ -2,7 +2,6 @@ package com.example.myfood
 
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 
@@ -11,6 +10,7 @@ class ViewRecipe : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.view_recipe)
 
+        // TODO: convert to recipe ID
         // load recipe parameters
         val recipeName = intent.getStringExtra("recipeName")
         val recipeImage = intent.getStringExtra("recipeImage")
