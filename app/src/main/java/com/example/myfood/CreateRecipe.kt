@@ -3,17 +3,21 @@ package com.example.myfood
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import com.example.myfood.model.Ingredient
+import com.example.myfood.model.RecipeIngredient
 import com.example.myfood.model.database
 
 class CreateRecipe : ComponentActivity() {
-    private var ingredients = mutableListOf<Ingredient>()
+    private var ingredients = mutableListOf<RecipeIngredient>()
+    private var allIngredients = database.getIngredients()
+    private var selectedIngredientId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +57,25 @@ class CreateRecipe : ComponentActivity() {
 
     private fun initializeIngredientList() {
         val ingredientList = findViewById<Spinner>(R.id.ingredientSpinner)
-        val ingredientNames = database.getIngredientNames()
+        val ingredientNames = getIngredientNames()
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, ingredientNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         ingredientList.adapter = adapter
+
+        ingredientList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedIngredient = allIngredients[position]
+                selectedIngredientId = selectedIngredient.first
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                selectedIngredientId = ""
+            }
+        }
+    }
+
+    private fun getIngredientNames(): List<String> {
+        return allIngredients.map { it.second.name }
     }
 
     private fun addIngredient() {
@@ -67,7 +86,7 @@ class CreateRecipe : ComponentActivity() {
         // do not accept empty fields
         if (name == "" || amount == "" || unit == "") return
 
-        val ingredient = Ingredient(name, amount.toInt(), unit)
+        val ingredient = RecipeIngredient(selectedIngredientId, name, amount.toInt(), unit)
         ingredients.add(ingredient)
     }
 

@@ -12,92 +12,98 @@ import java.util.UUID
 
 const val INGREDIENT_FILE = "ingredients.json"
 const val RECIPE_FILE = "recipes.json"
+const val INGREDIENT_STORAGE = "storage.txt"
 const val IMAGE_DIR = "images"
 
 // global database
 lateinit var database: Database
 
 class Database {
-    var ingredients: MutableMap<String, Ingredient>
-    var recipes: MutableMap<String, Recipe>
-    var storagePath: String
-    var images: Images
+    private var ingredients: MutableMap<String, Ingredient>
+    private var recipes: MutableMap<String, Recipe>
+    private var storagePath: String
+    private var images: Images
 
     constructor(context: Context) {
         this.storagePath = context.filesDir.absolutePath
         this.images = Images(storagePath)
 
-        val gson = Gson()
+        // read files
+        this.ingredients = readIngredients()
+        this.recipes = readRecipes()
+    }
 
-        // read ingredients from file
+    // ------------------- FILE OPS -------------------
+    private fun readIngredients(): MutableMap<String, Ingredient>{
+        val gson = Gson()
         val ingredientFile = File(storagePath, INGREDIENT_FILE)
         val ingredientsType = object : TypeToken<MutableMap<String, Ingredient>>() {}.type
 
+        // file doesn't exist (create it)
         if (!ingredientFile.exists()) {
             ingredientFile.createNewFile()
-            this.ingredients = mutableMapOf()
-        } else {
-            val ingredientJson = ingredientFile.readText(Charsets.UTF_8)
-
-            // empty file
-            if (ingredientJson == "") {
-                this.ingredients = mutableMapOf()
-            } else {
-                this.ingredients = gson.fromJson(ingredientJson, ingredientsType)
-            }
+            return mutableMapOf()
         }
 
-        // read recipes from file
-        val recipeFile = File(storagePath, RECIPE_FILE)
-        val recipesType = object : TypeToken<MutableMap<String, Recipe>>() {}.type
+        // read file
+        val ingredientJson = ingredientFile.readText(Charsets.UTF_8)
 
-        if (!recipeFile.exists()) {
-            recipeFile.createNewFile()
-            this.recipes = mutableMapOf()
-        } else {
-            val recipeJson = recipeFile.readText(Charsets.UTF_8)
+        // empty file
+        if (ingredientJson == "") return mutableMapOf()
 
-            // empty file
-            if (recipeJson == "") {
-                this.recipes = mutableMapOf()
-            } else {
-                this.recipes = gson.fromJson(recipeJson, recipesType)
-            }
-        }
+        return gson.fromJson(ingredientJson, ingredientsType)
     }
 
-    fun writeIngredients() {
+    private fun writeIngredients() {
         val gson = Gson()
         val ingredientFile = File(storagePath, INGREDIENT_FILE)
         val ingredientJson = gson.toJson(ingredients)
         ingredientFile.writeText(ingredientJson, Charsets.UTF_8)
     }
 
-    fun getIngredientNames(): List<String> {
-        return ingredients.values.map { it.name }
+    private  fun readRecipes(): MutableMap<String, Recipe> {
+        val gson = Gson()
+        val recipeFile = File(storagePath, RECIPE_FILE)
+        val recipesType = object : TypeToken<MutableMap<String, Recipe>>() {}.type
+
+        // file doesn't exist (create it)
+        if (!recipeFile.exists()) {
+            recipeFile.createNewFile()
+            return mutableMapOf()
+        }
+
+        // read file
+        val recipeJson = recipeFile.readText(Charsets.UTF_8)
+
+        // empty file
+        if (recipeJson == "") return mutableMapOf()
+
+        return gson.fromJson(recipeJson, recipesType)
     }
 
-    fun writeRecipes() {
+    private fun writeRecipes() {
         val gson = Gson()
         val recipeFile = File(storagePath, RECIPE_FILE)
         val recipeJson = gson.toJson(recipes)
         recipeFile.writeText(recipeJson, Charsets.UTF_8)
     }
 
+    // ------------------- DATABASE OPS -------------------
     fun newIngredient(name: String, amount: Int, unit: String) {
         val id = UUID.randomUUID().toString()
-        val ingredient = Ingredient(name, amount, unit)
+        val ingredient = Ingredient(name, amount, amount, unit)
         ingredients[id] = ingredient
         writeIngredients()
     }
 
-    fun newRecipe(name: String, image: String, ingredients: List<Ingredient>, instructions: String) {
+    fun newRecipe(name: String, image: String, ingredients: List<RecipeIngredient>, instructions: String) {
         val id = UUID.randomUUID().toString()
         val recipe = Recipe(name, image, ingredients, instructions)
         recipes[id] = recipe
         writeRecipes()
     }
 
+    // ------------------- GETTERS -------------------
     fun getIngredient(id: String): Ingredient? {
         return ingredients[id]
     }
@@ -106,18 +112,49 @@ class Database {
         return recipes[id]
     }
 
-    fun getIngredients(): List<Ingredient> {
-        return ingredients.values.toList()
+    fun getIngredientNames(): List<String> {
+        return ingredients.values.map { it.name }
     }
 
-    fun getRecipes(): List<Recipe> {
-        return recipes.values.toList()
+    fun getIngredients(): List<Pair<String, Ingredient>> {
+        return ingredients.toList()
+    }
+
+    fun getRecipes(): List<Pair<String, Recipe>> {
+        return recipes.toList()
+    }
+
+    fun getAvailableIngredients(): Set<String> {
+        return ingredients.filter { it.value.amount > 0 }.keys
+    }
+
+    fun getAvailableRecipes(): List<Pair<String, Recipe>> {
+        val availableIngredients = getAvailableIngredients()
+        return recipes.filter { it.value.ingredients.all { availableIngredients.contains(it.id) } }.toList()
+    }
+
+    // ------------------- SETTERS -------------------
+    fun addIngredientAmount(id: String) {
+        val ingredient = ingredients[id]
+        if (ingredient != null) {
+            ingredient.amount += ingredient.packSize
+            writeIngredients()
+        }
+    }
+
+    fun removeIngredientAmount(id: String) {
+        val ingredient = ingredients[id]
+        if (ingredient != null && 0 < ingredient.amount) {
+            ingredient.amount -= ingredient.packSize
+            writeIngredients()
+        }
     }
 }
 
 
 class Images {
-    var storagePath: String
+    private val storagePath: String
+
     constructor(storagePath: String) {
         this.storagePath = storagePath
 

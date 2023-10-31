@@ -1,15 +1,15 @@
 package com.example.myfood.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfood.R
-import com.example.myfood.model.Recipe
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import com.example.myfood.model.Ingredient
+import com.example.myfood.model.database
 
 
 // bind views to variables
@@ -22,7 +22,7 @@ class IngredientViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
 // display ingredients in a RecyclerView
-class IngredientAdapter(private val ingredients: List<Ingredient>) : RecyclerView.Adapter<IngredientViewHolder>() {
+class IngredientAdapter(private val ingredients: List<Pair<String, Ingredient>>) : RecyclerView.Adapter<IngredientViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.ingredient_layout, parent, false)
@@ -30,11 +30,40 @@ class IngredientAdapter(private val ingredients: List<Ingredient>) : RecyclerVie
     }
 
     override fun onBindViewHolder(holder: IngredientViewHolder, position: Int) {
-        val ingredient = ingredients[position]
+        val ingredientId = ingredients[position].first
+        val ingredient = ingredients[position].second
 
+        renderIngredient(holder, ingredient)
+
+        holder.itemView.setOnLongClickListener {
+            // TODO: delete ingredient (open some menu?)
+            println("LONG HOLD")
+            true
+        }
+
+        holder.addIngredient.setOnClickListener {
+            database.addIngredientAmount(ingredientId)
+            val ig = database.getIngredient(ingredientId)
+            renderIngredient(holder, ig!!)
+        }
+
+        holder.removeIngredient.setOnClickListener {
+            database.removeIngredientAmount(ingredientId)
+            val ig = database.getIngredient(ingredientId)
+            renderIngredient(holder, ig!!)
+        }
+    }
+
+    private fun renderIngredient(holder: IngredientViewHolder, ingredient: Ingredient) {
         holder.ingredientName.text = ingredient.name
-        holder.ingredientAmount.text = ingredient.amount.toString() + " " + ingredient.unit
-        // TODO: add button functionality
+        holder.ingredientAmount.text = "${ingredient.amount} ${ingredient.unit}"
+
+        holder.removeIngredient.isEnabled = ingredient.amount != 0
+        if (ingredient.amount == 0) {
+            holder.ingredientName.setTextColor(Color.parseColor("#FF0000"))
+        } else {
+            holder.ingredientName.setTextColor(Color.parseColor("#FFFFFF"))
+        }
     }
 
     override fun getItemCount(): Int {

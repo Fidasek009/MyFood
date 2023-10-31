@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfood.adapter.IngredientAdapter
 import com.example.myfood.adapter.RecipeAdapter
+import com.example.myfood.model.Recipe
 import com.example.myfood.model.database
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         createToolbar()
 
         // defaultly render only available recipes
-        renderAvailableRecipes()
+        renderRecipes(database.getAvailableRecipes())
     }
 
     private fun createToolbar(){
@@ -55,12 +56,13 @@ class MainActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.availableRecipes -> {
-                    renderAvailableRecipes()
+                    renderRecipes(database.getAvailableRecipes())
                     drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
                 R.id.allRecipes -> {
-                    // Handle option 1
+                    renderRecipes(database.getRecipes())
+                    drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
                 R.id.myIngredients -> {
@@ -95,18 +97,18 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 if(showingRecipes){
-                    renderAvailableRecipes()
+                    renderRecipes(database.getAvailableRecipes())
                 } else {
                     renderIngredients()
                 }
             }
         }
     
-    private fun renderAvailableRecipes() {
+    private fun renderRecipes(recipes: List<Pair<String, Recipe>>) {
         // available recipes
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = RecipeAdapter(database.getRecipes())
+        recyclerView.adapter = RecipeAdapter(recipes)
         showingRecipes = true
 
         // add recipe button
