@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfood.R
 import com.example.myfood.ViewRecipe
@@ -17,7 +19,8 @@ import com.example.myfood.model.RecipeIngredient
 class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val recipeName: TextView = itemView.findViewById(R.id.recipeName)
     val recipeImage: ImageView = itemView.findViewById(R.id.recipeImage)
-    val recipeIngredients: TextView = itemView.findViewById(R.id.recipeIngredients)
+//    val recipeIngredients: TextView = itemView.findViewById(R.id.recipeIngredients)
+    val recipeIngredients: RecyclerView = itemView.findViewById(R.id.recipeIngredients)
 }
 
 
@@ -34,8 +37,13 @@ class RecipeAdapter(private val recipes: List<Pair<String, Recipe>>) : RecyclerV
 
         holder.recipeName.text = recipe.name
         // TODO: set recipe image
-        holder.recipeIngredients.text = ingredientsString(recipe.ingredients)
+        // holder.recipeIngredients.text = ingredientsString(recipe.ingredients)
 
+        // ingredients
+        holder.recipeIngredients.layoutManager = GridLayoutManager(holder.itemView.context, 3, LinearLayoutManager.HORIZONTAL,false)
+        holder.recipeIngredients.adapter = ItemAdapter(recipe.ingredients)
+
+        // open recipe on click
         holder.itemView.setOnClickListener {
             // get current recipe
             val recipeId = recipes[position].first

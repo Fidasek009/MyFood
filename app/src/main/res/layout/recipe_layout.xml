@@ -36,16 +36,25 @@
             android:text="Example Recipe"
         />
 
-        <TextView
+<!--        <TextView-->
+<!--            android:id="@+id/recipeIngredients"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_toEndOf="@id/recipeImage"-->
+<!--            android:layout_below="@id/recipeName"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="11sp"-->
+<!--            android:text="• Ingredient 1\t\t• Ingredient 4\n• Ingredient 2\t\t• Ingredient 5\n• Ingredient 3"-->
+<!--        />-->
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recipeIngredients"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/recipeImage"
             android:layout_below="@id/recipeName"
             android:layout_marginStart="8dp"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            android:text="• Ingredient 1\t\t• Ingredient 4\n• Ingredient 2\t\t• Ingredient 5\n• Ingredient 3"
         />
 
     </RelativeLayout>
