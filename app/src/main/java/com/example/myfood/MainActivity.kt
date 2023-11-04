@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     
-    private fun renderRecipes(recipes: List<Pair<String, Recipe>>) {
+    private fun renderRecipes(recipes: List<Recipe>) {
         // available recipes
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)

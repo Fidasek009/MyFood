@@ -2,9 +2,10 @@ package com.example.myfood.model
 
 
 data class Ingredient(
+    val id: String,
     val name: String,
     val packSize: Int,
-    var amount: Int,
+    val amount: Int,
     val unit: String
 )
 

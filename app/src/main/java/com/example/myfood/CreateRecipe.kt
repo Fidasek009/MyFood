@@ -65,7 +65,7 @@ class CreateRecipe : ComponentActivity() {
         ingredientList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedIngredient = allIngredients[position]
-                selectedIngredientId = selectedIngredient.first
+                selectedIngredientId = selectedIngredient.id
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -75,7 +75,7 @@ class CreateRecipe : ComponentActivity() {
     }
 
     private fun getIngredientNames(): List<String> {
-        return allIngredients.map { it.second.name }
+        return allIngredients.map { it.name }
     }
 
     private fun addIngredient() {

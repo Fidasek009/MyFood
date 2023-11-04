@@ -19,5 +19,4 @@ class SplashScreen : ComponentActivity() {
         startActivity(intent)
         finish()
     }
-
 }

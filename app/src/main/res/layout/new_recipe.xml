@@ -118,7 +118,6 @@
         android:layout_below="@id/addIngredientButton"
         android:textColor="@color/white"
         android:layout_margin="16dp"
-        android:text="• Milk 100 ml\n• Sugar 50 g\n• Flour 200 g\n• Eggs 2 x\n• Butter 50 g\n• Baking Powder 1 tsp"
     />
 
     <EditText

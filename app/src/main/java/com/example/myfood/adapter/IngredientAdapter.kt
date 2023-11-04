@@ -22,7 +22,7 @@ class IngredientViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
 // display ingredients in a RecyclerView
-class IngredientAdapter(private val ingredients: List<Pair<String, Ingredient>>) : RecyclerView.Adapter<IngredientViewHolder>() {
+class IngredientAdapter(private val ingredients: List<Ingredient>) : RecyclerView.Adapter<IngredientViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.ingredient_layout, parent, false)
@@ -30,27 +30,26 @@ class IngredientAdapter(private val ingredients: List<Pair<String, Ingredient>>)
     }
 
     override fun onBindViewHolder(holder: IngredientViewHolder, position: Int) {
-        val ingredientId = ingredients[position].first
-        val ingredient = ingredients[position].second
+        val ingredient = ingredients[position]
 
         renderIngredient(holder, ingredient)
 
         holder.itemView.setOnLongClickListener {
-            // TODO: delete ingredient (open some menu?)
+            // TODO: delete/edit ingredient (open some menu?)
             println("LONG HOLD")
             true
         }
 
         holder.addIngredient.setOnClickListener {
-            database.addIngredientAmount(ingredientId)
-            val ig = database.getIngredient(ingredientId)
-            renderIngredient(holder, ig!!)
+            database.addIngredientAmount(ingredient.id)
+            val ig = database.getIngredient(ingredient.id)
+            renderIngredient(holder, ig)
         }
 
         holder.removeIngredient.setOnClickListener {
-            database.removeIngredientAmount(ingredientId)
-            val ig = database.getIngredient(ingredientId)
-            renderIngredient(holder, ig!!)
+            database.removeIngredientAmount(ingredient.id)
+            val ig = database.getIngredient(ingredient.id)
+            renderIngredient(holder, ig)
         }
     }
 
