@@ -1,0 +1,4 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/orange" />
+    <item android:drawable="@drawable/baseline_food_bank"/>
+</layer-list>

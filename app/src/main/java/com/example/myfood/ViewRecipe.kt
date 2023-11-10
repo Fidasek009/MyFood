@@ -15,14 +15,7 @@ class ViewRecipe : ComponentActivity() {
 
         // load recipe parameters
         val recipeId = intent.getStringExtra("recipeId")
-        val nullableRecipe = database.getRecipe(recipeId ?: "")
-
-        // recipe not found
-        if (nullableRecipe == null) {
-            finish()
-        }
-
-        val recipe = nullableRecipe!!
+        val recipe = database.getRecipe(recipeId ?: "")
 
         // set image
         val img = database.getImage(recipe.id)

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfood.adapter.IngredientAdapter
 import com.example.myfood.adapter.RecipeAdapter
+import com.example.myfood.model.Database
 import com.example.myfood.model.Recipe
 import com.example.myfood.model.database
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -22,10 +23,13 @@ import com.google.android.material.navigation.NavigationView
 
 
 class MainActivity : AppCompatActivity() {
-    lateinit var toggle: ActionBarDrawerToggle
-    var showingRecipes = true
+    private lateinit var toggle: ActionBarDrawerToggle
+    private var showingRecipes = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // initialize database
+        database = Database(this)
+
         // create view
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -33,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         // custom function to create toolbar and drawer
         createToolbar()
 
-        // defaultly render only available recipes
+        // render only available recipes by default
         renderRecipes(database.getAvailableRecipes())
     }
 

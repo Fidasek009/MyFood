@@ -1,5 +1,6 @@
 package com.example.myfood.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -53,6 +54,7 @@ class IngredientAdapter(private val ingredients: List<Ingredient>) : RecyclerVie
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun renderIngredient(holder: IngredientViewHolder, ingredient: Ingredient) {
         holder.ingredientName.text = ingredient.name
         holder.ingredientAmount.text = "${ingredient.amount} ${ingredient.unit}"

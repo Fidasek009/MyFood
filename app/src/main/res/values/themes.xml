@@ -4,6 +4,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
 
     <style name="MyMaterialTheme" parent="Theme.MaterialComponents.Light.NoActionBar">

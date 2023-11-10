@@ -1,5 +1,6 @@
 package com.example.myfood.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -22,19 +23,18 @@ class ItemAdapter(private val ingredients: List<RecipeIngredient>) : RecyclerVie
         return ListItemViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ListItemViewHolder, position: Int) {
         val ingredient = ingredients[position]
         holder.listItemText.text = "• ${ingredient.name} (${ingredient.amount} ${ingredient.unit})  "
 
         // Set text color to red if ingredient is missing
-        val amount = database.getIngredient(ingredient.id)?.amount
-        if (amount == null || amount < ingredient.amount)
+        val amount = database.getIngredient(ingredient.id).amount
+        if (amount < ingredient.amount)
             holder.listItemText.setTextColor(Color.RED)
     }
 
     override fun getItemCount(): Int {
         return ingredients.size
     }
-
-    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

@@ -25,7 +25,7 @@ class CreateIngredient : ComponentActivity() {
         }
     }
 
-    fun createIngredient() {
+    private fun createIngredient() {
         val name = findViewById<EditText>(R.id.ingredientName).text.toString()
         val amount = findViewById<EditText>(R.id.ingredientAmount).text.toString()
         val unit = findViewById<EditText>(R.id.ingredientUnit).text.toString()
