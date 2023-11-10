@@ -65,16 +65,19 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
 }
 
 
-class Database {
+class Database(context: Context) {
     private var storagePath: String
-    private var images: Images
     private var db: SQLiteDatabase
 
-    constructor(context: Context) {
+    init {
         this.storagePath = context.filesDir.absolutePath
-
-        this.images = Images(storagePath)
         this.db = MyDatabaseHelper(context).writableDatabase
+
+        // create image directory if it doesn't exist
+        val imageDir = File(storagePath, IMAGE_DIR)
+        if (!imageDir.exists() && !imageDir.isDirectory) {
+            imageDir.mkdir()
+        }
     }
 
     // ------------------- INSERTIONS -------------------
@@ -89,7 +92,8 @@ class Database {
         db.insert("ingredients", null, ingredientValues)
     }
 
-    fun newRecipe(name: String, image: String, ingredients: List<RecipeIngredient>, instructions: String) {
+    fun newRecipe(name: String, image: Bitmap?, ingredients: List<RecipeIngredient>, instructions: String) {
+        // save recipe
         val recipeValues = ContentValues().apply {
             put("name", name)
             put("instructions", instructions)
@@ -109,7 +113,7 @@ class Database {
             db.insert("recipe_ingredients", null, ingredientValues)
         }
 
-        // TODO: save image
+        saveImage(recipeId.toString(), image)
     }
 
     // ------------------- SELECTIONS -------------------
@@ -130,7 +134,7 @@ class Database {
         }
 
         val ingredient = Ingredient(
-            cursor.getInt(0).toString(),
+            cursor.getString(0),
             cursor.getString(1),
             cursor.getInt(2),
             cursor.getInt(3),
@@ -160,7 +164,7 @@ class Database {
 
         // fetch ingredients
         return Recipe(
-            cursor.getInt(0).toString(),
+            cursor.getString(0),
             cursor.getString(1),
             getRecipeIngredients(id),
             cursor.getString(2)
@@ -183,7 +187,7 @@ class Database {
         while (cursor.moveToNext()) {
             ingredients.add(
                 RecipeIngredient(
-                    cursor.getInt(0).toString(),
+                    cursor.getString(0),
                     cursor.getString(1),
                     cursor.getInt(2),
                     cursor.getString(3)
@@ -211,7 +215,7 @@ class Database {
         while (cursor.moveToNext()) {
             ingredients.add(
                 Ingredient(
-                    cursor.getInt(0).toString(),
+                    cursor.getString(0),
                     cursor.getString(1),
                     cursor.getInt(2),
                     cursor.getInt(3),
@@ -240,9 +244,9 @@ class Database {
         while (cursor.moveToNext()) {
             recipes.add(
                 Recipe(
-                    cursor.getInt(0).toString(),
+                    cursor.getString(0),
                     cursor.getString(1),
-                    getRecipeIngredients(cursor.getInt(0).toString()), // TODO: try .getString(0)
+                    getRecipeIngredients(cursor.getString(0)),
                     cursor.getString(2)
                 )
             )
@@ -251,7 +255,6 @@ class Database {
         cursor.close()
         return recipes
     }
-
 
     fun getAvailableRecipes(): List<Recipe> {
         val cursor = db.rawQuery(
@@ -269,9 +272,9 @@ class Database {
         while (cursor.moveToNext()) {
             recipes.add(
                 Recipe(
-                    cursor.getInt(0).toString(),
+                    cursor.getString(0),
                     cursor.getString(1),
-                    getRecipeIngredients(cursor.getInt(0).toString()),
+                    getRecipeIngredients(cursor.getString(0)),
                     cursor.getString(2)
                 )
             )
@@ -304,32 +307,20 @@ class Database {
             arrayOf(id)
         )
     }
-}
 
-
-class Images {
-    private val storagePath: String
-
-    constructor(storagePath: String) {
-        this.storagePath = storagePath
-
-        // create directory if it doesn't exist
-        val imageDir = File(storagePath, IMAGE_DIR)
-        if (!imageDir.exists() && !imageDir.isDirectory) {
-            imageDir.mkdir()
-        }
-    }
-
+    // ------------------- IMAGES -------------------
     fun getImage(id: String): Bitmap? {
-        val imageFile = File(storagePath, "$IMAGE_DIR/$id")
+        val imageFile = File(storagePath, "$IMAGE_DIR/$id.jpeg")
         if (!imageFile.exists()) {
             return null
         }
         return BitmapFactory.decodeFile(imageFile.absolutePath)
     }
 
-    fun saveImage(id: String, image: Bitmap) {
-        val imageFile = File(storagePath, "$IMAGE_DIR/$id")
+    private fun saveImage(id: String, image: Bitmap?) {
+        if (image == null) return
+
+        val imageFile = File(storagePath, "$IMAGE_DIR/$id.jpeg")
         val fileOutputStream = FileOutputStream(imageFile)
         image.compress(Bitmap.CompressFormat.JPEG, 80, fileOutputStream)
         fileOutputStream.close()

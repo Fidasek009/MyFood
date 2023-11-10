@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myfood.R
 import com.example.myfood.ViewRecipe
 import com.example.myfood.model.Recipe
+import com.example.myfood.model.database
 
 
 // bind views to variables
@@ -34,7 +35,11 @@ class RecipeAdapter(private val recipes: List<Recipe>) : RecyclerView.Adapter<Re
         val recipe = recipes[position]
 
         holder.recipeName.text = recipe.name
-        // TODO: set recipe image
+
+        // set image
+        val img = database.getImage(recipe.id)
+        if (img != null)
+            holder.recipeImage.setImageBitmap(img)
 
         // ingredients
         holder.recipeIngredients.layoutManager = GridLayoutManager(holder.itemView.context, 3, LinearLayoutManager.HORIZONTAL,false)

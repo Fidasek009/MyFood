@@ -2,7 +2,10 @@ package com.example.myfood
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -11,6 +14,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.myfood.model.RecipeIngredient
 import com.example.myfood.model.database
 
@@ -18,6 +22,7 @@ class CreateRecipe : ComponentActivity() {
     private var ingredients = mutableListOf<RecipeIngredient>()
     private var allIngredients = database.getIngredients()
     private var selectedIngredientId = ""
+    private lateinit var selectedBitmap: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +41,13 @@ class CreateRecipe : ComponentActivity() {
         val saveButton = findViewById<Button>(R.id.saveRecipe)
         saveButton.setOnClickListener {
             saveRecipe()
+        }
+
+        val addImageButton = findViewById<Button>(R.id.addImageButton)
+        addImageButton.setOnClickListener {
+            // Open the gallery to select an image
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            pickImage.launch(galleryIntent)
         }
 
         // add ingredient button
@@ -58,8 +70,8 @@ class CreateRecipe : ComponentActivity() {
     private fun initializeIngredientList() {
         val ingredientList = findViewById<Spinner>(R.id.ingredientSpinner)
         val ingredientNames = getIngredientNames()
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, ingredientNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, R.layout.custom_spinner_item, ingredientNames)
+        adapter.setDropDownViewResource(R.layout.custom_spinner_item)
         ingredientList.adapter = adapter
 
         ingredientList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -100,17 +112,31 @@ class CreateRecipe : ComponentActivity() {
         findViewById<TextView>(R.id.ingredientsView).text = ingredientString
     }
 
+    private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // Image selected successfully
+            val imageUri = result.data?.data
+            if (imageUri != null) {
+                val inputStream = contentResolver.openInputStream(imageUri)
+                selectedBitmap = BitmapFactory.decodeStream(inputStream)
+            }
+        }
+    }
+
     private fun saveRecipe() {
         val recipeName = findViewById<EditText>(R.id.recipeName).text.toString()
         val recipeInstructions = findViewById<EditText>(R.id.recipeInstructions).text.toString()
 
         if(recipeName == "" || recipeInstructions == "" || ingredients.size == 0) return
 
-        database.newRecipe(recipeName, "img.jpg", ingredients, recipeInstructions)
+        // save with image if selected
+        if (this::selectedBitmap.isInitialized)
+            database.newRecipe(recipeName, selectedBitmap, ingredients, recipeInstructions)
+        else
+            database.newRecipe(recipeName, null, ingredients, recipeInstructions)
 
         // successfully created ingredient
         setResult(Activity.RESULT_OK, Intent())
         finish()
     }
-
 }

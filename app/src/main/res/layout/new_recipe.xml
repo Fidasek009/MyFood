@@ -43,6 +43,19 @@
         android:hint="Recipe Name"
     />
 
+    <Button
+        android:id="@+id/addImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/blue"
+        android:text="Add Image"
+        android:textColor="@color/white"
+    />
+
     <Spinner
         android:id="@+id/ingredientSpinner"
         android:layout_width="wrap_content"
@@ -133,15 +146,6 @@
         android:textColor="@color/white"
         android:textColorHint="@color/dark_white"
         android:hint="Instructions"
-    />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:backgroundTint="@color/blue"
-        android:textColor="@color/white"
-        android:text="Add Image"
     />
 
 </RelativeLayout>

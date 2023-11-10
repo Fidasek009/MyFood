@@ -2,6 +2,7 @@ package com.example.myfood
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.example.myfood.model.RecipeIngredient
@@ -23,7 +24,11 @@ class ViewRecipe : ComponentActivity() {
 
         val recipe = nullableRecipe!!
 
-        // findViewById<ImageView>(R.id.recipeImage).setImageResource(todo: load image)
+        // set image
+        val img = database.getImage(recipe.id)
+        if (img != null)
+            findViewById<ImageView>(R.id.recipeImage).setImageBitmap(img)
+
         findViewById<TextView>(R.id.recipeName).text = recipe.name
         findViewById<TextView>(R.id.ingredientsList).text = ingredientString(recipe.ingredients)
         findViewById<TextView>(R.id.instructions).text = recipe.instructions

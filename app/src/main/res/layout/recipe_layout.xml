@@ -20,7 +20,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background"
+            android:src="@drawable/no_image"
             android:contentDescription="Recipe Image"
         />
 
