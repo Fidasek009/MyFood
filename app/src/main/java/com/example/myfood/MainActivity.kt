@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.shoppingList -> {
-                    // Handle option 2
+                    // TODO: Create shopping list
                     true
                 }
                 R.id.about -> {
@@ -108,11 +108,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
     
-    private fun renderRecipes(recipes: List<Recipe>) {
+    private fun renderRecipes(recipes: MutableList<Recipe>) {
         // available recipes
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = RecipeAdapter(recipes)
+        recyclerView.adapter = RecipeAdapter(this.startForResult ,recipes)
         showingRecipes = true
 
         // add recipe button
@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity() {
         // available recipes
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = IngredientAdapter(database.getIngredients())
+        recyclerView.adapter = IngredientAdapter(this.startForResult, database.getIngredients())
         showingRecipes = false
 
         // add ingredient button

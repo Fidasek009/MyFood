@@ -19,6 +19,7 @@ import com.example.myfood.model.RecipeIngredient
 import com.example.myfood.model.database
 
 class CreateRecipe : ComponentActivity() {
+    private val id by lazy { intent.getStringExtra("id") }
     private var ingredients = mutableListOf<RecipeIngredient>()
     private var allIngredients = database.getIngredients()
     private var selectedIngredientId = ""
@@ -65,13 +66,16 @@ class CreateRecipe : ComponentActivity() {
                 renderIngredients()
             }
         }
+
+        // load values if in edit mode
+        loadValues()
     }
 
     private fun initializeIngredientList() {
         val ingredientList = findViewById<Spinner>(R.id.ingredientSpinner)
         val ingredientNames = getIngredientNames()
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, R.layout.custom_spinner_item, ingredientNames)
-        adapter.setDropDownViewResource(R.layout.custom_spinner_item)
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, R.layout.spinner_menu, ingredientNames)
+        adapter.setDropDownViewResource(R.layout.spinner_menu)
         ingredientList.adapter = adapter
 
         ingredientList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -102,6 +106,23 @@ class CreateRecipe : ComponentActivity() {
         ingredients.add(ingredient)
     }
 
+    private fun loadValues() {
+        if (id == null) return
+
+        val recipe = database.getRecipe(id!!)
+
+        findViewById<EditText>(R.id.recipeName).setText(recipe.name)
+        findViewById<EditText>(R.id.recipeInstructions).setText(recipe.instructions)
+        ingredients = recipe.ingredients.toMutableList()
+        renderIngredients()
+
+        // load image if exists
+        val bmp = database.getImage(recipe.id)
+        if (bmp != null) {
+            selectedBitmap = bmp
+        }
+    }
+
     private fun renderIngredients() {
         var ingredientString = ""
 
@@ -129,11 +150,21 @@ class CreateRecipe : ComponentActivity() {
 
         if(recipeName == "" || recipeInstructions == "" || ingredients.size == 0) return
 
-        // save with image if selected
-        if (this::selectedBitmap.isInitialized)
-            database.newRecipe(recipeName, selectedBitmap, ingredients, recipeInstructions)
-        else
-            database.newRecipe(recipeName, null, ingredients, recipeInstructions)
+        // create or edit ingredient
+        if (id == null) {
+            // create with image if selected
+            if (this::selectedBitmap.isInitialized)
+                database.newRecipe(recipeName, selectedBitmap, ingredients, recipeInstructions)
+            else
+                database.newRecipe(recipeName, null, ingredients, recipeInstructions)
+        }
+        else {
+            // edit with image if selected
+            if (this::selectedBitmap.isInitialized)
+                database.editRecipe(id!!, recipeName, selectedBitmap, ingredients, recipeInstructions)
+            else
+                database.editRecipe(id!!, recipeName, null, ingredients, recipeInstructions)
+        }
 
         // successfully created ingredient
         setResult(Activity.RESULT_OK, Intent())

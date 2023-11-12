@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import com.example.myfood.model.database
 
 class CreateIngredient : ComponentActivity() {
+    private val id by lazy { intent.getStringExtra("id") }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.new_ingredient)
@@ -23,6 +24,19 @@ class CreateIngredient : ComponentActivity() {
         saveButton.setOnClickListener {
             createIngredient()
         }
+
+        // load values if in edit mode
+        loadValues()
+    }
+
+    private fun loadValues() {
+        if (id == null) return
+
+        val ingredient = database.getIngredient(id!!)
+
+        findViewById<EditText>(R.id.ingredientName).setText(ingredient.name)
+        findViewById<EditText>(R.id.ingredientAmount).setText(ingredient.amount.toString())
+        findViewById<EditText>(R.id.ingredientUnit).setText(ingredient.unit)
     }
 
     private fun createIngredient() {
@@ -33,7 +47,13 @@ class CreateIngredient : ComponentActivity() {
         // do not accept empty fields
         if(name == "" || amount == "" || unit == "") return
 
-        database.newIngredient(name, amount.toInt(), unit)
+        // create or edit ingredient
+        if (id == null) {
+            database.newIngredient(name, amount.toInt(), unit)
+        }
+        else {
+            database.editIngredient(id!!, name, amount.toInt(), unit)
+        }
 
         // successfully created ingredient
         setResult(Activity.RESULT_OK, Intent())

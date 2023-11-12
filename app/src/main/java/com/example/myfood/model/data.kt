@@ -80,42 +80,6 @@ class Database(context: Context) {
         }
     }
 
-    // ------------------- INSERTIONS -------------------
-    fun newIngredient(name: String, amount: Int, unit: String) {
-        val ingredientValues = ContentValues().apply {
-            put("name", name)
-            put("pack_size", amount)
-            put("amount", amount)
-            put("unit", unit)
-        }
-
-        db.insert("ingredients", null, ingredientValues)
-    }
-
-    fun newRecipe(name: String, image: Bitmap?, ingredients: List<RecipeIngredient>, instructions: String) {
-        // save recipe
-        val recipeValues = ContentValues().apply {
-            put("name", name)
-            put("instructions", instructions)
-        }
-
-        val recipeId = db.insert("recipes", null, recipeValues)
-
-        // save ingredients
-        for (ingredient in ingredients) {
-            val ingredientValues = ContentValues().apply {
-                put("recipe_id", recipeId)
-                put("ingredient_id", ingredient.id)
-                put("amount", ingredient.amount)
-                put("unit", ingredient.unit)
-            }
-
-            db.insert("recipe_ingredients", null, ingredientValues)
-        }
-
-        saveImage(recipeId.toString(), image)
-    }
-
     // ------------------- SELECTIONS -------------------
     fun getIngredient(id: String): Ingredient {
         val cursor = db.query(
@@ -200,7 +164,7 @@ class Database(context: Context) {
     }
 
 
-    fun getIngredients(): List<Ingredient> {
+    fun getIngredients(): MutableList<Ingredient> {
         val cursor = db.query(
             "ingredients",
             arrayOf("id", "name", "pack_size", "amount", "unit"),
@@ -229,7 +193,7 @@ class Database(context: Context) {
     }
 
 
-    fun getRecipes(): List<Recipe> {
+    fun getRecipes(): MutableList<Recipe> {
         val cursor = db.query(
             "recipes",
             arrayOf("id", "name", "instructions"),
@@ -256,7 +220,7 @@ class Database(context: Context) {
         return recipes
     }
 
-    fun getAvailableRecipes(): List<Recipe> {
+    fun getAvailableRecipes(): MutableList<Recipe> {
         val cursor = db.rawQuery(
             """
             SELECT r.id, r.name, r.instructions, COUNT(CASE WHEN ig.amount >= ri.amount THEN 1 END) have, COUNT(*) need
@@ -285,6 +249,42 @@ class Database(context: Context) {
 
     }
 
+    // ------------------- INSERTIONS -------------------
+    fun newIngredient(name: String, amount: Int, unit: String) {
+        val ingredientValues = ContentValues().apply {
+            put("name", name)
+            put("pack_size", amount)
+            put("amount", amount)
+            put("unit", unit)
+        }
+
+        db.insert("ingredients", null, ingredientValues)
+    }
+
+    fun newRecipe(name: String, image: Bitmap?, ingredients: List<RecipeIngredient>, instructions: String) {
+        // save recipe
+        val recipeValues = ContentValues().apply {
+            put("name", name)
+            put("instructions", instructions)
+        }
+
+        val recipeId = db.insert("recipes", null, recipeValues)
+
+        // save ingredients
+        for (ingredient in ingredients) {
+            val ingredientValues = ContentValues().apply {
+                put("recipe_id", recipeId)
+                put("ingredient_id", ingredient.id)
+                put("amount", ingredient.amount)
+                put("unit", ingredient.unit)
+            }
+
+            db.insert("recipe_ingredients", null, ingredientValues)
+        }
+
+        saveImage(recipeId.toString(), image)
+    }
+
     // ------------------- UPDATES -------------------
     fun addIngredientAmount(id: String) {
         db.execSQL(
@@ -306,6 +306,50 @@ class Database(context: Context) {
             """.trimMargin(),
             arrayOf(id)
         )
+    }
+
+    fun editIngredient(id: String, name: String, amount: Int, unit: String){
+        val ingredientValues = ContentValues().apply {
+            put("name", name)
+            put("pack_size", amount)
+            put("amount", amount)
+            put("unit", unit)
+        }
+
+        db.update("ingredients", ingredientValues, "id = ?", arrayOf(id))
+    }
+
+    fun editRecipe(id: String, name: String, image: Bitmap?, ingredients: List<RecipeIngredient>, instructions: String){
+        val recipeValues = ContentValues().apply {
+            put("name", name)
+            put("instructions", instructions)
+        }
+
+        db.update("recipes", recipeValues, "id = ?", arrayOf(id))
+
+        // update ingredients
+        db.delete("recipe_ingredients", "recipe_id = ?", arrayOf(id))
+        for (ingredient in ingredients) {
+            val ingredientValues = ContentValues().apply {
+                put("recipe_id", id)
+                put("ingredient_id", ingredient.id)
+                put("amount", ingredient.amount)
+                put("unit", ingredient.unit)
+            }
+
+            db.insert("recipe_ingredients", null, ingredientValues)
+        }
+
+        saveImage(id, image)
+    }
+
+    // ------------------- DELETIONS -------------------
+    fun deleteIngredient(id: String) {
+        db.delete("ingredients", "id = ?", arrayOf(id))
+    }
+
+    fun deleteRecipe(id: String) {
+        db.delete("recipes", "id = ?", arrayOf(id))
     }
 
     // ------------------- IMAGES -------------------

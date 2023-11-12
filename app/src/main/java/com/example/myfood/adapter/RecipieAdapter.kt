@@ -1,14 +1,19 @@
 package com.example.myfood.adapter
 
 import android.content.Intent
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myfood.CreateRecipe
 import com.example.myfood.R
 import com.example.myfood.ViewRecipe
 import com.example.myfood.model.Recipe
@@ -24,7 +29,7 @@ class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
 // display recipes in a RecyclerView
-class RecipeAdapter(private val recipes: List<Recipe>) : RecyclerView.Adapter<RecipeViewHolder>() {
+class RecipeAdapter(private val handler: ActivityResultLauncher<Intent>, private val recipes: MutableList<Recipe>) : RecyclerView.Adapter<RecipeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recipe_layout, parent, false)
@@ -60,9 +65,43 @@ class RecipeAdapter(private val recipes: List<Recipe>) : RecyclerView.Adapter<Re
             // open new activity
             context.startActivity(intent)
         }
+
+        // popup menu
+        holder.itemView.setOnLongClickListener {
+            showPopupMenu(holder, recipe, position)
+            true
+        }
     }
 
     override fun getItemCount(): Int {
         return recipes.size
+    }
+
+    private fun showPopupMenu(holder: RecipeViewHolder, recipe: Recipe, position: Int) {
+        val view = holder.itemView
+        val popupMenu = PopupMenu(view.context, view, Gravity.END, 0, R.style.PopupMenuStyle)
+        val inflater: MenuInflater = popupMenu.menuInflater
+        inflater.inflate(R.menu.item_menu, popupMenu.menu)
+
+        // Set a listener for menu item clicks
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_edit -> {
+                    val intent = Intent(holder.itemView.context, CreateRecipe::class.java)
+                    intent.putExtra("id", recipe.id)
+                    handler.launch(intent)
+                    true
+                }
+                R.id.action_delete -> {
+                    recipes.removeAt(position)
+                    this.notifyItemRemoved(position)
+                    database.deleteRecipe(recipe.id)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
     }
 }
