@@ -83,20 +83,17 @@
         android:hint="Amount"
     />
 
-    <EditText
+    <TextView
         android:id="@+id/ingredientUnit"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_below="@id/recipeName"
         android:layout_toEndOf="@id/ingredientAmount"
         android:layout_margin="8dp"
-        android:paddingHorizontal="12dp"
-        android:background="@drawable/rounded_rectangle"
-        android:inputType="text"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:paddingVertical="8dp"
         android:textColor="@color/white"
-        android:textColorHint="@color/dark_white"
-        android:hint="Units"
+        android:textStyle="bold"
+        android:textSize="24sp"
     />
 
     <Button
@@ -110,7 +107,8 @@
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/green"
         android:text="Add Ingredient"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+    />
 
     <Button
         android:id="@+id/removeIngredientButton"

@@ -6,4 +6,5 @@
     <string name="title_activity_view_recipe">ViewRecipe</string>
     <string name="title_activity_create_ingredient">CreateIngredient</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
+    <string name="title_activity_about">About</string>
 </resources>

@@ -23,6 +23,7 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
         db.execSQL(RECIPES_TABLE)
         db.execSQL(INGREDIENTS_TABLE)
         db.execSQL(RECIPE_INGREDIENTS_TABLE)
+        db.execSQL(SHOPPING_LIST_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -56,8 +57,15 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
                 recipe_id INTEGER,
                 ingredient_id INTEGER,
                 amount INTEGER,
-                unit TEXT,
                 FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
+                FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE CASCADE
+            );
+        """
+
+        private const val SHOPPING_LIST_TABLE = """
+            CREATE TABLE shopping_list (
+                ingredient_id INTEGER,
+                checked BOOLEAN,
                 FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE CASCADE
             );
         """
@@ -139,7 +147,7 @@ class Database(context: Context) {
     private fun getRecipeIngredients(recipeId: String): List<RecipeIngredient> {
         val cursor = db.rawQuery(
             """
-            SELECT ig.id, ig.name, ri.amount, ri.unit
+            SELECT ig.id, ig.name, ri.amount, ig.unit
             FROM recipe_ingredients ri
             INNER JOIN ingredients ig ON ri.ingredient_id = ig.id
             WHERE ri.recipe_id = ?
@@ -249,6 +257,32 @@ class Database(context: Context) {
 
     }
 
+    fun getShoppingList(): MutableList<RecipeIngredient> {
+        val cursor = db.rawQuery(
+            """
+            SELECT ig.id, ig.name, sl.checked, ig.unit
+            FROM ingredients ig
+            INNER JOIN shopping_list sl ON ig.id = sl.ingredient_id
+            """.trimIndent(),
+            null
+        )
+
+        val ingredients = mutableListOf<RecipeIngredient>()
+        while (cursor.moveToNext()) {
+            ingredients.add(
+                RecipeIngredient(
+                    cursor.getString(0),
+                    cursor.getString(1),
+                    cursor.getInt(2),
+                    cursor.getString(3)
+                )
+            )
+        }
+
+        cursor.close()
+        return ingredients
+    }
+
     // ------------------- INSERTIONS -------------------
     fun newIngredient(name: String, amount: Int, unit: String) {
         val ingredientValues = ContentValues().apply {
@@ -276,13 +310,28 @@ class Database(context: Context) {
                 put("recipe_id", recipeId)
                 put("ingredient_id", ingredient.id)
                 put("amount", ingredient.amount)
-                put("unit", ingredient.unit)
             }
 
             db.insert("recipe_ingredients", null, ingredientValues)
         }
 
         saveImage(recipeId.toString(), image)
+    }
+
+    fun addToShoppingList(ingredientId: String) {
+        // check if ingredient is already in shopping list
+        val cursor = db.rawQuery("SELECT COUNT(*) FROM shopping_list WHERE ingredient_id = ?", arrayOf(ingredientId))
+        cursor.use {
+            if (cursor.moveToFirst() && cursor.getInt(0) > 0) return
+        }
+
+        // add to shopping list
+        val shoppingListValues = ContentValues().apply {
+            put("ingredient_id", ingredientId)
+            put("checked", false)
+        }
+
+        db.insert("shopping_list", null, shoppingListValues)
     }
 
     // ------------------- UPDATES -------------------
@@ -306,6 +355,11 @@ class Database(context: Context) {
             """.trimMargin(),
             arrayOf(id)
         )
+    }
+
+    fun checkShoppingListItem(ingredientId: String, checked: Boolean) {
+        val checkedValue = ContentValues().apply { put("checked", checked) }
+        db.update("shopping_list", checkedValue, "ingredient_id = ?", arrayOf(ingredientId))
     }
 
     fun editIngredient(id: String, name: String, amount: Int, unit: String){
@@ -334,7 +388,6 @@ class Database(context: Context) {
                 put("recipe_id", id)
                 put("ingredient_id", ingredient.id)
                 put("amount", ingredient.amount)
-                put("unit", ingredient.unit)
             }
 
             db.insert("recipe_ingredients", null, ingredientValues)
@@ -350,6 +403,10 @@ class Database(context: Context) {
 
     fun deleteRecipe(id: String) {
         db.delete("recipes", "id = ?", arrayOf(id))
+    }
+
+    fun deleteShoppingListItem(id: String) {
+        db.delete("shopping_list", "ingredient_id = ?", arrayOf(id))
     }
 
     // ------------------- IMAGES -------------------

@@ -12,6 +12,6 @@ data class Ingredient(
 data class RecipeIngredient(
     val id: String,
     val name: String,
-    val amount: Int,
+    var amount: Int,
     val unit: String
 )

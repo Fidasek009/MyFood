@@ -5,17 +5,23 @@
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:roundIcon="@drawable/baseline_food_bank"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:enableOnBackInvokedCallback="true"
         tools:targetApi="34">
+        <activity
+            android:name=".About"
+            android:exported="false"
+            android:label="@string/title_activity_about"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,16 +33,19 @@
             android:name=".CreateIngredient"
             android:exported="false"
             android:label="@string/title_activity_create_ingredient"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".ViewRecipe"
             android:exported="false"
             android:label="@string/title_activity_view_recipe"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".CreateRecipe"
             android:exported="false"
             android:label="@string/title_activity_create_recipe"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme" />
     </application>
 

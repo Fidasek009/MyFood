@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import androidx.activity.ComponentActivity
 import com.example.myfood.model.database
 
@@ -36,13 +37,15 @@ class CreateIngredient : ComponentActivity() {
 
         findViewById<EditText>(R.id.ingredientName).setText(ingredient.name)
         findViewById<EditText>(R.id.ingredientAmount).setText(ingredient.amount.toString())
-        findViewById<EditText>(R.id.ingredientUnit).setText(ingredient.unit)
+        val units = resources.getStringArray(R.array.units)
+        val unitIndex = units.indexOf(ingredient.unit)
+        findViewById<Spinner>(R.id.ingredientUnit).setSelection(unitIndex)
     }
 
     private fun createIngredient() {
         val name = findViewById<EditText>(R.id.ingredientName).text.toString()
         val amount = findViewById<EditText>(R.id.ingredientAmount).text.toString()
-        val unit = findViewById<EditText>(R.id.ingredientUnit).text.toString()
+        val unit = findViewById<Spinner>(R.id.ingredientUnit).selectedItem.toString()
 
         // do not accept empty fields
         if(name == "" || amount == "" || unit == "") return

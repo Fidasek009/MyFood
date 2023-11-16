@@ -72,6 +72,7 @@ class CreateRecipe : ComponentActivity() {
     }
 
     private fun initializeIngredientList() {
+        val ingredientUnit = findViewById<TextView>(R.id.ingredientUnit)
         val ingredientList = findViewById<Spinner>(R.id.ingredientSpinner)
         val ingredientNames = getIngredientNames()
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, R.layout.spinner_menu, ingredientNames)
@@ -82,10 +83,12 @@ class CreateRecipe : ComponentActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedIngredient = allIngredients[position]
                 selectedIngredientId = selectedIngredient.id
+                ingredientUnit.text = selectedIngredient.unit
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 selectedIngredientId = ""
+                ingredientUnit.text = ""
             }
         }
     }
@@ -97,7 +100,7 @@ class CreateRecipe : ComponentActivity() {
     private fun addIngredient() {
         val name = findViewById<Spinner>(R.id.ingredientSpinner).selectedItem.toString()
         val amount = findViewById<EditText>(R.id.ingredientAmount).text.toString()
-        val unit = findViewById<EditText>(R.id.ingredientUnit).text.toString()
+        val unit = findViewById<TextView>(R.id.ingredientUnit).text.toString()
 
         // do not accept empty fields
         if (name == "" || amount == "" || unit == "") return

@@ -31,7 +31,10 @@
             android:layout_below="@id/toolbar"
             android:layout_marginTop="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:nestedScrollingEnabled="true"/>
+            android:nestedScrollingEnabled="true"
+            android:paddingBottom="100dp"
+            android:clipToPadding="false"
+        />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/addButton"
@@ -39,14 +42,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
+            android:layout_margin="32dp"
             android:backgroundTint="@color/orange"
             android:contentDescription="add"
             android:src="@drawable/baseline_add_32"
-            android:theme="@style/MyMaterialTheme" />
+            />
 
     </RelativeLayout>
 
@@ -62,6 +62,3 @@
     />
 
 </androidx.drawerlayout.widget.DrawerLayout>
-
-
-

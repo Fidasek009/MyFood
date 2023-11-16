@@ -68,22 +68,17 @@
         android:hint="Amount"
     />
 
-    <EditText
+    <Spinner
         android:id="@+id/ingredientUnit"
+        android:layout_below="@id/ingredientName"
+        android:layout_toEndOf="@id/ingredientAmount"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_below="@id/ingredientName"
         android:layout_margin="8dp"
-        android:layout_toEndOf="@id/ingredientAmount"
-        android:background="@drawable/rounded_rectangle"
-        android:inputType="text"
         android:paddingHorizontal="12dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/white"
-        android:textColorHint="@color/dark_white"
-        android:hint="Units"
+        android:background="@drawable/rounded_rectangle"
+        android:popupBackground="@color/light_gray"
+        android:entries="@array/units"
     />
-
-
 
 </RelativeLayout>

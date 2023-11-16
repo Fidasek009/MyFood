@@ -49,6 +49,8 @@ class RecipeAdapter(private val handler: ActivityResultLauncher<Intent>, private
         // ingredients
         holder.recipeIngredients.layoutManager = GridLayoutManager(holder.itemView.context, 3, LinearLayoutManager.HORIZONTAL,false)
         holder.recipeIngredients.adapter = ItemAdapter(recipe.ingredients)
+        // allow click-through
+        holder.recipeIngredients.suppressLayout(true)
 
         // open recipe on click
         holder.itemView.setOnClickListener {

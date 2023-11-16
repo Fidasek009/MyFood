@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
@@ -23,8 +23,8 @@ import com.example.myfood.model.database
 class IngredientViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val ingredientName: TextView = itemView.findViewById(R.id.ingredientName)
     val ingredientAmount: TextView = itemView.findViewById(R.id.ingredientAmount)
-    val addIngredient: Button = itemView.findViewById(R.id.addIngredient)
-    val removeIngredient: Button = itemView.findViewById(R.id.removeIngredient)
+    val addIngredient: ImageButton = itemView.findViewById(R.id.addIngredient)
+    val removeIngredient: ImageButton = itemView.findViewById(R.id.removeIngredient)
 }
 
 
@@ -39,7 +39,7 @@ class IngredientAdapter(private val handler: ActivityResultLauncher<Intent>, pri
     override fun onBindViewHolder(holder: IngredientViewHolder, position: Int) {
         val ingredient = ingredients[position]
 
-        renderIngredient(holder, ingredient)
+        renderIngredient(holder, position)
 
         holder.itemView.setOnLongClickListener {
             showPopupMenu(holder, ingredient, position)
@@ -48,28 +48,35 @@ class IngredientAdapter(private val handler: ActivityResultLauncher<Intent>, pri
 
         holder.addIngredient.setOnClickListener {
             database.addIngredientAmount(ingredient.id)
-            val ig = database.getIngredient(ingredient.id)
-            renderIngredient(holder, ig)
+            ingredients[position] = database.getIngredient(ingredient.id)
+            notifyItemChanged(position)
         }
-
-        holder.removeIngredient.setOnClickListener {
-            database.removeIngredientAmount(ingredient.id)
-            val ig = database.getIngredient(ingredient.id)
-            renderIngredient(holder, ig)
-        }
-        // TODO: add ingredient to shopping list
     }
 
     @SuppressLint("SetTextI18n")
-    private fun renderIngredient(holder: IngredientViewHolder, ingredient: Ingredient) {
+    private fun renderIngredient(holder: IngredientViewHolder, position: Int) {
+        val ingredient = ingredients[position]
         holder.ingredientName.text = ingredient.name
         holder.ingredientAmount.text = "${ingredient.amount} ${ingredient.unit}"
 
-        holder.removeIngredient.isEnabled = ingredient.amount != 0
         if (ingredient.amount == 0) {
             holder.ingredientName.setTextColor(Color.parseColor("#FF0000"))
+            holder.removeIngredient.setImageResource(R.drawable.baseline_add_shopping_cart_24)
+
+            // add to shopping list
+            holder.removeIngredient.setOnClickListener {
+                database.addToShoppingList(ingredient.id)
+            }
         } else {
             holder.ingredientName.setTextColor(Color.parseColor("#FFFFFF"))
+            holder.removeIngredient.setImageResource(R.drawable.baseline_remove_24)
+
+            // remove ingredient
+            holder.removeIngredient.setOnClickListener {
+                database.removeIngredientAmount(ingredient.id)
+                ingredients[position] = database.getIngredient(ingredient.id)
+                notifyItemChanged(position)
+            }
         }
     }
 
@@ -94,8 +101,8 @@ class IngredientAdapter(private val handler: ActivityResultLauncher<Intent>, pri
                 }
                 R.id.action_delete -> {
                     ingredients.removeAt(position)
-                    this.notifyItemRemoved(position)
                     database.deleteIngredient(ingredient.id)
+                    notifyItemRemoved(position)
                     true
                 }
                 else -> false
